@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+    <script src="index.js"></script>
+    <script src="/superhero.js"></script>
+  </head>
+  <body>
+    <div class="text-center">
+      <h1>SuperHero Hunter App</h1>
+    </div>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-4 me-3">
+          <form>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control bg-light-subtle text-dark"
+                id="textInput"
+                placeholder="Enter Super Hero name"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="col-md-3 justify-content-end">
+          
+            <a
+              href="./myfavouritesuperhero.html"
+              class="link-primary link-offset-2  btn btn-danger text-warning"
+              target="_blank"
+              id="favourites"
+            
+              >Go To Favourites</a
+            >
+          
+        </div>
+        
+      </div>
+      
+    </div>
+    <div class="container">
+      <div class="row" id="superhero"></div>
+    </div>
+  </body>
+  <script>
+    let container = document.getElementById("superhero");
+    var inputElement = document.getElementById("textInput");
+    var favouritesLink = document.getElementById("favourites");
+
+  // Add an event listener to the link
+  favouritesLink.addEventListener("click", function (event) {
+    event.preventDefault();
+
+    // Build the URL for the "superhero.html" page with query parameters
+    var favouritesUrl = "./myfavouritesuperhero.html"; // Modify the URL as needed
+     // Add your query parameters here
+
+    // Navigate to the "superhero.html" page
+    window.location.href = favouritesUrl;
+  });
+    // Add an event listener for the keyup event
+    inputElement.addEventListener("keyup", function (event) {
+      // Get the value of the input
+      let inputValue = event.target.value;
+
+      // Call the function and pass the input value
+      fetchDataAndStore(inputValue);
+    });
+
+    let superData; // Declare the variable outside the function
+
+    async function fetchData(value) {
+      console.log(value, "value");
+      try {
+        let apiUrl;
+
+        apiUrl = value
+          ? `https://gateway.marvel.com:443/v1/public/characters?ts=${time}&apikey=${publicKey}&hash=${hash}&nameStartsWith=${value}`
+          : `https://gateway.marvel.com:443/v1/public/characters?ts=${time}&apikey=${publicKey}&hash=${hash}`;
+
+        const response = await fetch(apiUrl);
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        return data?.data?.results;
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+        throw error; // Re-throw the error if needed
+      }
+    }
+
+    // Use a wrapper function to set the superData variable
+    async function fetchDataAndStore(value) {
+      try {
+        container.innerHTML = "";
+        superData = await fetchData(value);
+        for (var i = 0; i < superData.length; i++) {
+          var cardData = superData[i];
+          var colElement = document.createElement("div");
+          colElement.classList.add("col-lg-3", "mt-2", "mb-2");
+
+          // Create a new div element with Bootstrap card structure
+          var cardElement = document.createElement("div");
+          cardElement.classList.add("card");
+          cardElement.style.width = "18rem";
+
+          //crate an anchor element
+          var superHeroPage=document.createElement("a")
+          superHeroPage.href="./superhero.html"
+          superHeroPage.target='_blank'
+
+          // Create and append the image element
+          var imgElement = document.createElement("img");
+          imgElement.src =
+            cardData.thumbnail?.path + "." + cardData.thumbnail?.extension;
+          imgElement.classList.add("card-img-top");
+          imgElement.alt = "Card Image";
+          imgElement.height = "200";
+          superHeroPage.appendChild(imgElement)
+          cardElement.appendChild(superHeroPage);
+
+          // Create the card body
+          var cardBodyElement = document.createElement("div");
+          cardBodyElement.classList.add("card-body");
+
+          // Create and append the title element
+          var titleElement = document.createElement("h5");
+          titleElement.classList.add("card-title");
+          titleElement.textContent = cardData.name;
+          cardBodyElement.appendChild(titleElement);
+
+          // Create and append the text element
+          var textElement = document.createElement("p");
+          textElement.classList.add("card-text");
+          textElement.textContent =
+            cardData.description.length > 95
+              ? cardData.description.slice(0, 95) + "..."
+              : cardData.description ||
+                (cardData.description.length === 0 &&
+                  "some text for just experiencing the text only for considering the text nice text");
+          cardBodyElement.appendChild(textElement);
+
+          // Create and append the button element
+          var buttonElement = document.createElement("a");
+          buttonElement.href = "#";
+          buttonElement.classList.add("btn", "btn-primary");
+          buttonElement.textContent = "Add to Favorites";
+          cardBodyElement.appendChild(buttonElement);
+
+          // Append the card body to the card
+          cardElement.appendChild(cardBodyElement);
+          colElement.appendChild(cardElement);
+          container.appendChild(colElement);
+
+          let currentCardData = cardData;
+          buttonElement.addEventListener("click", function (event) {
+            event.preventDefault();
+            // Your logic for handling the button click
+            addToFavorites(currentCardData);
+            // Change the background color to red
+            buttonElement.style.backgroundColor = "red";
+          })
+          superHeroPage.addEventListener("click",function(event){
+          
+        localStorage.setItem("viewPage",JSON.stringify(currentCardData))
+          
+        })
+        }
+
+        //           buttonElement.addEventListener("click", function(event) {
+        //   event.preventDefault(); // Prevent the default behavior (e.g., following the link)
+
+        //   // Your logic for handling the button click
+        //   addToFavorites(cardData); // Assuming you have a function to handle adding to favorites
+        // });
+        
+      } catch (error) {
+        // Handle errors if needed
+        console.error("Error in fetchDataAndStore:", error.message);
+      }
+    }
+
+    // Call the wrapper function
+    fetchDataAndStore("");
+  </script>
+</html>
