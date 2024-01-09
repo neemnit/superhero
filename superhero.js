@@ -1,17 +1,14 @@
 let favouritesSuperHero
 let favourites=[]
 const addToFavorites=(data)=>{
-    if(favourites.length===0){
-        favourites= [data,...favourites]
-    }
-    else{
-        for(let i=0;i<favourites.length;i++){
-            if(favourites[i].id!==data.id){
-                favourites=[data,...favourites]
-            }
+    if (favourites.length === 0) {
+        favourites = [data, ...favourites];
+    } else {
+        if (!favourites.some(item => item.id === data.id)) {
+            favourites = [data, ...favourites];
         }
     }
-  
+    
 
 //    favourites=favourites.filter((favourite)=>{
 //     if(favourite.id!==data.id){
