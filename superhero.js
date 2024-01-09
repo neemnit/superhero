@@ -1,10 +1,28 @@
 let favouritesSuperHero
 let favourites=[]
 const addToFavorites=(data)=>{
-    favourites=favourites.filter((favourite)=>{
-        return favourite.id!==data.id
-    })
-  // favourites= [data,...favourites]
+    if(favourites.length===0){
+        favourites= [data,...favourites]
+    }
+    else{
+        for(let i=0;i<favourites.length;i++){
+            if(favourites[i].id!==data.id){
+                favourites=[data,...favourites]
+            }
+        }
+    }
+  
+
+//    favourites=favourites.filter((favourite)=>{
+//     if(favourite.id!==data.id){
+//         return favourite
+//     }
+//     // else{
+//     //     return data
+//     // }
+    
+//    })
+   console.log(favourites)
    
     localStorage.setItem("favourites",JSON.stringify(favourites))
      
