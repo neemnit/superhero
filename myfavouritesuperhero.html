@@ -24,7 +24,7 @@
  
     </script>
 </head>
-<body>
+<body style="background-color: lightblue;">
     <div class="text-center text-primary">
         <h1>My Favourite SuperHeroes</h1>
     </div>
@@ -35,13 +35,13 @@
       </div>
 </body>
 <script>
-  console.log(favouritesSuperHero)
+  
     let container = document.getElementById("superhero");
     function renderSuperHero(){
         container.innerHTML=''
      for (var i = 0; i < favouritesSuperHero.length; i++) {
           var cardData = favouritesSuperHero[i];
-          console.log("kumargin",cardData)
+      
           var colElement = document.createElement("div");
           colElement.classList.add("col-lg-3", "mt-2", "mb-2");
 
